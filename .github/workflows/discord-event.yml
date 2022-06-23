@@ -1,0 +1,44 @@
+name: Create Events on Discord
+
+permissions:
+  id-token: write
+
+on:
+  workflow_call:
+    inputs:
+      server-id:
+        required: true
+        type: string
+      time-zone:
+        required: true
+        type: string
+
+jobs:
+  discord-bot-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install http client
+        run: npm install @actions/http-client
+
+      - name: Dispatch event
+        uses: actions/github-script@v6
+        env:
+          SERVER_ID: ${{ inputs.server-id }}
+          TIME_ZONE: ${{ inputs.time-zone }}
+        with:
+          script: |
+            const httpm = require('@actions/http-client')
+            const http = new httpm.HttpClient()
+            const serverId = process.env.SERVER_ID
+            const timeZone = process.env.TIME_ZONE
+
+            let idToken = await core.getIDToken()
+            await http.postJson('https://discord.gitevents.workers.dev/', {
+              "serverId": serverId,
+              "timeZone": timeZone,
+              "payload": context.payload
+            }, {
+               Accept: 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': idToken
+            })

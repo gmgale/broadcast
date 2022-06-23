@@ -1,0 +1,8 @@
+name: GitEvents Propaganda Action
+description: 'Event / Meetup Automation :robot:'
+branding:
+  color: yellow
+  icon: rss
+runs:
+  main: src/index.js
+  using: node16
