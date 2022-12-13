@@ -1,0 +1,31 @@
+name: 'Create an event on Eventbrite'
+
+on:
+  workflow_call:
+    inputs:
+      EB-USER:
+        required: true
+        type: string
+      EB-PASS:
+        required: true
+        type: string
+
+jobs:
+  eventbrite-bot-dispatch:
+    runs-on: ubuntu-latest
+    env:
+      EB-USER: ${{EB-USER}}
+      EB-PASS: ${{EB-PASS}}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: node /src/eventbrite-event.js
+
+      - name: Dispatch event
+        uses: actions/github-script@v6
+
+
+  
